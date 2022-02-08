@@ -1,7 +1,9 @@
 # Data-410-Project-2
 
 ## Locally Weighted Regression
-Locally Weighted Regression (LWR) uses Euclidean Distance to 'weight' different data points based on their distance to the data points that are closer to the one we are trying to predict. The closer a data point is to the point we are trying to predict the heavier the weight will be. DEFINE KERNAL
+Locally Weighted Regression (LWR) is a non-parametric linear regression in 'local' segments to get an overall curve made up of smaller straight lines. This combines the simplicity of a linear regression with the flexibility of nonlinear regressions. 
+
+LWR uses Euclidean Distance to 'weight' different data points based on their distance to the data points that are closer to the one we are trying to predict. The weights are determined by a chosen kernel function. The different kernels weight slightly differently but in general the closer a data point is to the point we are trying to predict the heavier the weight will be.
 
 The code below uses the cars.csv file to show LWR in action. 
 ```
@@ -40,5 +42,8 @@ xtrain_scaled = scale.fit_transform(xtrain.reshape(-1,1))
 xtest_scaled = scale.transform(xtest.reshape(-1,1))
 
 yhat_test = lowess_reg(xtrain_scaled.ravel(),ytrain,xtest_scaled,tricubic,0.1)
+
+mse(yhat_test,ytest)
 ```
+The mse (mean squared error) of the predicted vs. actual values are a good indicator of LWR's accuracy. For the code seen above the mse was ~15.96.
 ## Random Forest Regression
