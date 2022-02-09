@@ -72,3 +72,7 @@ rf.fit(xtrain_scaled,ytrain)
 mse(ytest,rf.predict(xtest_scaled))
 ```
  For the RFR code seen above the mse was ~15.93.
+
+## Comparison
+
+In order to accuratley compare LWR and RFR 
