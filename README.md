@@ -1,18 +1,18 @@
 # Data-410-Project-2
 
 ## Locally Weighted Regression
-Locally Weighted Regression (LWR) is a non-parametric linear regression in 'local' segments to get an overall curve made up of smaller straight lines. This combines the simplicity of a linear regression with the flexibility of nonlinear regressions. 
+Locally Weighted Regression (Lowess) is a non-parametric linear regression in 'local' segments to get an overall curve made up of smaller straight lines. This combines the simplicity of a linear regression with the flexibility of nonlinear regressions. 
 
 LWR uses Euclidean Distance to 'weight' different data points based on their distance to the data points that are closer to the one we are trying to predict. The weights are determined by a chosen kernel function. The different kernels weight slightly differently but in general the closer a data point is to the point we are trying to predict the heavier the weight will be.
 
-The below code shows the functions for a tricubic kernel and the lowess_reg function which executes a LWR. The hyperperameter 'tau' that can be changed in order to improve accuracy.
+The below code shows the functions for a tricubic kernel and the lowess_reg function which executes a lowess. The hyperperameter 'tau' that can be changed in order to improve accuracy.
 
 ```
 # Tricubic Kernel
 def tricubic(x):
   return np.where(np.abs(x)>1,0,70/81*(1-np.abs(x)**3)**3)
  
-# LWR Code
+# Lowess Code
 def lowess_reg(x, y, xnew, kern, tau):
     # tau is called bandwidth K((x-x[i])/(2*tau))
     # IMPORTANT: we expect x to the sorted increasingly
@@ -48,7 +48,7 @@ yhat_test = lowess_reg(xtrain_scaled.ravel(),ytrain,xtest_scaled,tricubic,0.1)
 
 mse(yhat_test,ytest)
 ```
-The mse (mean squared error) of the predicted vs. actual y values are a good indicator of a regressiors accuracy. For the LWR code seen above the mse was ~15.96.
+The mse (mean squared error) of the predicted vs. actual y values are a good indicator of a regressiors accuracy. For the lowess code seen above the mse was ~15.96.
 
 ## Random Forest Regression
 Another type of regression is Random Forest Regression (RFR). RFR is an ensemble learning technique that builds multiple decision trees, making a 'forest'. RFR is more resilient to outliers, which can imporve external validity between the train and test sets. Another benefit is that the python library sklearn has an RFR function built in, so no code needs to be written. 
@@ -75,4 +75,34 @@ mse(ytest,rf.predict(xtest_scaled))
 
 ## Comparison
 
-In order to accuratley compare LWR and RFR 
+In order to accuratley compare Lowess and RFR you would need to split the data into train and test groups, as seen above and use a KFold validation technique to make sure your number are accurate, and not due to chance if the data splits in a certain way. 
+
+The below code uses the same data as above and compares Lowess with RFR.
+
+```
+# initiate KFold
+kf = KFold(n_splits=10,shuffle=True,random_state=310)
+
+# lists to catch the mse of each lowess and RFR regression
+mse_lwr = []
+mse_rf = []
+
+for idxtrain,idxtest in kf.split(x):
+  ytrain = y[idxtrain]
+  xtrain = x[idxtrain]
+  xtrain = scale.fit_transform(xtrain.reshape(-1,1))
+  ytest = y[idxtest]
+  xtest = x[idxtest]
+  xtest = scale.transform(xtest.reshape(-1,1))
+  yhat_lwr = lowess_reg(xtrain.ravel(),ytrain,xtest.ravel(),tricubic,0.1)
+  rf = RandomForestRegressor(n_estimators=100,max_depth=4)
+  rf.fit(xtrain,ytrain)
+  yhat_rf = rf.predict(xtest)
+  mse_lwr.append(mse(ytest,yhat_lwr))
+  mse_rf.append(mse(ytest,yhat_rf))
+  
+print('the mse for rf is:' + str(np.mean(mse_rf)))
+print('the mse for lwr is:' + str(np.mean(mse_lwr)))
+```
+
+With the above hyperperameters we see that the mse for RFR is ~19.39 and the mse for lowess is ~18.19.
