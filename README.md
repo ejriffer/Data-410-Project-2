@@ -50,6 +50,18 @@ mse(yhat_test,ytest)
 ```
 The mse (mean squared error) of the predicted vs. actual y values are a good indicator of a regressiors accuracy. For the lowess code seen above the mse was ~15.96.
 
+Below is the code to obtain a graph of xtest_scaled and y_test and the regression that we obtained through Lowess. 
+
+ ```
+ M = np.column_stack([xtest_scaled,yhat_test])
+ M = M[np.argsort(M[:,0])]
+ 
+ plt.scatter(xtest_scaled,ytest,color='blue',alpha=0.5)
+ plt.plot(M[:,0],M[:,1],color='red',lw=2)
+ ```
+ 
+ <img width="374" alt="Screen Shot 2022-02-11 at 4 32 14 PM" src="https://user-images.githubusercontent.com/74326062/153673216-4384f17e-0baa-4b00-98a2-7a988bd44504.png">
+
 ## Random Forest Regression
 Another type of regression is Random Forest Regression (RFR). RFR is an ensemble learning technique that builds multiple decision trees, making a 'forest'. RFR is more resilient to outliers, which can imporve external validity between the train and test sets. Another benefit is that the python library sklearn has an RFR function built in, so no code needs to be written. 
 
@@ -72,6 +84,10 @@ rf.fit(xtrain_scaled,ytrain)
 mse(ytest,rf.predict(xtest_scaled))
 ```
  For the RFR code seen above the mse was ~15.93.
+ 
+ Using the same code as seen above here is the regression that we obtained through RFR. 
+ 
+ <img width="374" alt="Screen Shot 2022-02-11 at 4 33 57 PM" src="https://user-images.githubusercontent.com/74326062/153673388-b35f6ad7-f635-40a7-9d72-4c04fe1da423.png">
 
 ## Comparison
 
@@ -105,4 +121,4 @@ print('the mse for rf is:' + str(np.mean(mse_rf)))
 print('the mse for lwr is:' + str(np.mean(mse_lwr)))
 ```
 
-With the above hyperperameters we see that the mse for RFR is ~19.39 and the mse for lowess is ~18.19.
+With the above hyperperameters we see that the mse for RFR is ~19.39 and the mse for Lowess is ~18.19. So, in this case we can determine that Lowess is a slightly superior model to RFR. 
