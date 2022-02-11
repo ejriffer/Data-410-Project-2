@@ -34,7 +34,7 @@ def lowess_reg(x, y, xnew, kern, tau):
     f = interp1d(x, yest,fill_value='extrapolate')
     return f(xnew)
 ```
-The code below uses the cars.csv file to show the lowess_reg function in action. 
+The code below uses the cars.csv file to show the lowess_reg function in action.  
 ```
 x = data['WGT'].values
 y = data['MPG'].values
